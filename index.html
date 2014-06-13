@@ -50,6 +50,7 @@ var yAxis = d3.svg.axis()     // creates the y-axis at the left and assign the y
     .scale(y)
     .orient("left");
 
+
 var line = d3.svg.line()      // creates the line generator and define how to extract x and y values from passed data
     .x(function(d) { return x(d[0]); })
     .y(function(d) { return y(d[1]); });
@@ -61,6 +62,9 @@ var svg = d3.select("body").append("svg")    // append svg tag (basic informatio
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); // call translate so that graph is shifted by left and top margins
 
 
+var getDates = function(d) { return d[0]; }
+var getPrices = function(d) { return d[1]; }
+
 d3.json("nyse_c.json", function(error, data) {
     data.prices.forEach(function(element) {  // d contains each array element in ["2014-06-05", 48.630000000000003], ["2014-06-04", 47.880000000000003] ....
         element[0] = parseDate(element[0]); // converts string to Date Time object
@@ -69,12 +73,15 @@ d3.json("nyse_c.json", function(error, data) {
     });
 
 
-  x.domain(d3.extent(data.prices, function(d) { return d[0]; })); // extent returns the mininum and maximum values of the given array
+  x.domain(d3.extent(data.prices, getDates)); // extent returns the mininum and maximum values of the given array
                                                          // https://github.com/mbostock/d3/wiki/Arrays#d3_extent
                                                         // more on time scale domain https://github.com/mbostock/d3/wiki/Time-Scales#domain
-  y.domain(d3.extent(data.prices, function(d) { return d[1]; }));
-                                                         // more on linear scale domain https://github.com/mbostock/d3/wiki/Quantitative-Scales#linear_domain
-
+	// (@_@) need to center vertically here: 
+	y.domain([
+		        d3.min(data.prices, getPrices), 
+		        d3.max(data.prices, getPrices)
+						] );
+//	console.log(d3.min(data.prices, getPrices));
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," +  height + ")")

@@ -10,7 +10,8 @@ var x = d3.time.scale()       // creates a time scale in the range of 0 to width
                               // x is assigned the time scale
 
 var y = d3.scale.linear()     // creates a linear scale
-    .range([height, 0]);      // "linear scale" means that the scale is creatd based on just numbers
+	.nice() // make it work with round numbers 
+	.range([height, 0]);      // "linear scale" means that the scale is creatd based on just numbers
                               // y is assigned the linear scale
 
 var xAxis = d3.svg.axis()     // creates the x-axis at the bottom and assign to xAxis variable
@@ -37,7 +38,7 @@ var getDates = function(d) { return d[0]; }
 var getPrices = function(d) { return d[1]; }
 
 // var url = "http://elliotwilliams.org/foretracks/stockData/nasdaq_aapl" 
-var url = "http://elliotwilliams.org/foretracks/stockData/nasdaq_msft" 
+//var url = "http://elliotwilliams.org/foretracks/stockData/nasdaq_msft" 
 
 d3.json(url, function(error, data) {
     data.prices.forEach(function(element) {  // d contains each array element in ["2014-06-05", 48.630000000000003], ["2014-06-04", 47.880000000000003] ....
@@ -45,7 +46,7 @@ d3.json(url, function(error, data) {
         element[1] = +element[1]; // the "+" sign simply casts from string to number so that the prices is a array of numbers
     });
 
-  x.domain(d3.extent(data.prices, getDates)); // extent returns the mininum and maximum values of the given array
+	x.domain(d3.extent(data.prices, getDates)); // extent returns the mininum and maximum values of the given array
                                                          // https://github.com/mbostock/d3/wiki/Arrays#d3_extent
                                                         // more on time scale domain https://github.com/mbostock/d3/wiki/Time-Scales#domain
 	
@@ -71,11 +72,18 @@ d3.json(url, function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Price ($)");
+      .text("Closing Price ($)");
 
   svg.append("path")
       .datum(data.prices)
       .attr("class", "line")
+      .attr("d", line); // append path element in svg to draw the line 
+	
+  	// add horizontal line at current price
+  svg.append("path")
+      .datum([data.prices[0], [data.prices[data.prices.length-1][0], data.prices[0][1]]])
+      .attr("class", "line")
+      .attr("class", "horizontal")
       .attr("d", line); // append path element in svg to draw the line 
 
 	svg.selectAll("dot") // Add points to each closing price
@@ -83,6 +91,13 @@ d3.json(url, function(error, data) {
 			.enter().append("circle")
 			.attr("r", 3.5)
 			.attr("cx", function(d) { return x(d[0]); })
-			.attr("cy", function(d) { return y(d[1]); });
+			.attr("cy", function(d) { return y(d[1]); })
+		//.on("mouseover", function() {
+         //d3.select(this).transition()
+         //.attr("cy", function() { return getPrices(this) })
+         //.delay(0)
+         //.duration(2000)
+         //.ease("elastic", 10, .3)
+    //})
 });
 

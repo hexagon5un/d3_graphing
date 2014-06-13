@@ -8,10 +8,15 @@
         shape-rendering: crispEdges;
     }
     .x.axis path {
-        display: none;
+       display: none; 
     }
     .line {
         fill: none;
         stroke: steelblue;
+        stroke-width: 1.5px;
+    }
+    .horizontal {
+        fill: none;
+        stroke: black;
         stroke-width: 1.5px;
     }

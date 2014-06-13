@@ -1,12 +1,15 @@
 
+var canvasWidth =  600;
+var canvasHeight = 300;
+
 var margin = {top: 20, right: 20, bottom: 30, left: 50}, // set margins
-    width = 960 - margin.left - margin.right,            // set width of canvas
-    height = 500 - margin.top - margin.bottom;           // set height of canvas
+    width = canvasWidth - margin.left - margin.right,            // set width of canvas
+    height = canvasHeight - margin.top - margin.bottom;           // set height of canvas
 
 var parseDate = d3.time.format("%Y-%m-%d").parse;        // define a function to parse date from string to Date object ("%d-%b-%y")
 
 var x = d3.time.scale()       // creates a time scale in the range of 0 to width defined above 
-    .range([0, width]);       // "time scale" means that the scale is created based on DateTime values
+	 .range([0, width]);       // "time scale" means that the scale is created based on DateTime values
                               // x is assigned the time scale
 
 var y = d3.scale.linear()     // creates a linear scale
@@ -16,6 +19,7 @@ var y = d3.scale.linear()     // creates a linear scale
 
 var xAxis = d3.svg.axis()     // creates the x-axis at the bottom and assign to xAxis variable
     .scale(x)
+	.ticks(d3.time.week, 1)  // weekly ticks
     .orient("bottom");
 
 var yAxis = d3.svg.axis()     // creates the y-axis at the left and assign the yAxis variable
@@ -57,8 +61,6 @@ d3.json(url, function(error, data) {
 	var halfRange = Math.max(ymax-lastPrice, lastPrice-ymin);
 	y.domain([ lastPrice - halfRange, lastPrice + halfRange] );
  
-	// Line for center?
-
 	svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," +  height + ")")
@@ -92,12 +94,11 @@ d3.json(url, function(error, data) {
 			.attr("r", 3.5)
 			.attr("cx", function(d) { return x(d[0]); })
 			.attr("cy", function(d) { return y(d[1]); })
-		//.on("mouseover", function() {
-         //d3.select(this).transition()
-         //.attr("cy", function() { return getPrices(this) })
-         //.delay(0)
-         //.duration(2000)
-         //.ease("elastic", 10, .3)
-    //})
+			//.on("mouseover", function() {
+				//d3.select(this)
+				//.attr("fill", "yellow")
+				//.append("svg:text")
+				//.text("hello")
+			//})
 });
 

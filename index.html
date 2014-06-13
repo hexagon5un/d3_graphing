@@ -65,24 +65,29 @@ var svg = d3.select("body").append("svg")    // append svg tag (basic informatio
 var getDates = function(d) { return d[0]; }
 var getPrices = function(d) { return d[1]; }
 
-d3.json("nyse_c.json", function(error, data) {
+var url = "http://elliotwilliams.org/foretracks/stockData/nasdaq_aapl" 
+var url = "http://elliotwilliams.org/foretracks/stockData/nasdaq_msft" 
+
+d3.json(url, function(error, data) {
     data.prices.forEach(function(element) {  // d contains each array element in ["2014-06-05", 48.630000000000003], ["2014-06-04", 47.880000000000003] ....
         element[0] = parseDate(element[0]); // converts string to Date Time object
         element[1] = +element[1]; // the "+" sign simply casts from string to number so that the prices is a array of numbers
-        
     });
-
 
   x.domain(d3.extent(data.prices, getDates)); // extent returns the mininum and maximum values of the given array
                                                          // https://github.com/mbostock/d3/wiki/Arrays#d3_extent
                                                         // more on time scale domain https://github.com/mbostock/d3/wiki/Time-Scales#domain
-	// (@_@) need to center vertically here: 
-	y.domain([
-		        d3.min(data.prices, getPrices), 
-		        d3.max(data.prices, getPrices)
-						] );
-//	console.log(d3.min(data.prices, getPrices));
-  svg.append("g")
+	
+	// Center graph around last entry
+	var ymax = d3.max(data.prices, getPrices);
+	var ymin = 	d3.min(data.prices, getPrices);
+	var lastPrice = getPrices(data.prices[0]); // reverse-chron order (@_@)
+	var halfRange = Math.max(ymax-lastPrice, lastPrice-ymin);
+	y.domain([ lastPrice - halfRange, lastPrice + halfRange] );
+ 
+	// Line for center?
+
+	svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," +  height + ")")
       .call(xAxis); // create another g element and paint xAxis

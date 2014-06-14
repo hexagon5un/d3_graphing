@@ -13,10 +13,14 @@
     .line {
         fill: none;
         stroke: steelblue;
-        stroke-width: 1.5px;
+        stroke-width: 2.5px;
     }
     .horizontal {
         fill: none;
         stroke: black;
         stroke-width: 1.5px;
+    }
+    .area {
+    fill: lightsteelblue;
+    stroke-width: 0;
     }

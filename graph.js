@@ -26,10 +26,12 @@ var graphData = function(url){
 		.scale(y)
 		.orient("left");
 
-	var area = d3.svg.area() // add in shading
+	var area = function(baseline){
+		return d3.svg.area() // add in shading
 		.x(function(d) { return x(d[0]); })
-		.y0(height)
+		.y0(y(baseline))
 		.y1(function(d) { return y(d[1]); });
+	}
 
 	var line = d3.svg.line()      // creates the line generator and define how to extract x and y values from passed data
 		.x(function(d) { return x(d[0]); })
@@ -79,6 +81,11 @@ var graphData = function(url){
 
 	svg.append("path")
 		.datum(data.prices)
+		.attr("class", "area")
+		.attr("d", area(data.prices[0][1]));
+	
+	svg.append("path")
+		.datum(data.prices)
 		.attr("class", "line")
 		.attr("d", line); // append path element in svg to draw the line 
 		
@@ -89,10 +96,6 @@ var graphData = function(url){
 		.attr("class", "horizontal")
 		.attr("d", line); // append path element in svg to draw the line 
 
-	svg.append("path")
-		.datum(data.prices)
-		.attr("class", "area")
-		.attr("d", area);
 
 	svg.selectAll("dot") // Add points to each closing price
 		.data(data.prices)
